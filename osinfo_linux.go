@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// New returns a instance of OSInfo if the current running OS is OS X.
+// New returns an instance of OSInfo.
 func New() (oi *OSInfo, err error) {
 	oi = &OSInfo{
 		Name: runtime.GOOS,
