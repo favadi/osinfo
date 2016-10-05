@@ -2,6 +2,7 @@ package osinfo
 
 import (
 	"bytes"
+	"fmt"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -13,14 +14,31 @@ func New() (oi *OSInfo, err error) {
 		Name: runtime.GOOS,
 	}
 
-	cmd := exec.Command("/usr/bin/lsb_release", "--description")
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	if err = cmd.Run(); err != nil {
+	// kernel vesion
+	unameCmd := exec.Command("uname", "--kernel-release")
+	var unameOut bytes.Buffer
+	unameCmd.Stdout = &unameOut
+	if err = unameCmd.Run(); err != nil {
 		return
 	}
-	desc := out.String()
+	kernelRelease := unameOut.String()
+
+	// distribution name and release
+	lsbPath, err := exec.LookPath("lsb_release")
+	if err != nil { // lsb_release is not installed, returns kernel release
+		oi.Version = kernelRelease
+		return
+	}
+	lsbCmd := exec.Command(lsbPath, "--description")
+	var lsbOut bytes.Buffer
+	lsbCmd.Stdout = &lsbOut
+	if err = lsbCmd.Run(); err != nil {
+		return
+	}
+	desc := lsbOut.String()
 	// Description:	Ubuntu 14.04.4 LTS
-	oi.Version = strings.TrimPrefix(desc, "Description:\t")
+	dist := strings.TrimPrefix(desc, "Description:\t")
+	oi.Version = fmt.Sprintf("%s (%s)", dist, kernelRelease)
+
 	return
 }
