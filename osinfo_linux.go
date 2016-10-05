@@ -21,7 +21,7 @@ func New() (oi *OSInfo, err error) {
 	if err = unameCmd.Run(); err != nil {
 		return
 	}
-	kernelRelease := unameOut.String()
+	kernelRelease := strings.TrimSpace(unameOut.String())
 
 	// distribution name and release
 	lsbPath, err := exec.LookPath("lsb_release")
@@ -37,7 +37,7 @@ func New() (oi *OSInfo, err error) {
 	}
 	desc := lsbOut.String()
 	// Description:	Ubuntu 14.04.4 LTS
-	dist := strings.TrimPrefix(desc, "Description:\t")
+	dist := strings.TrimSpace(strings.TrimPrefix(desc, "Description:\t"))
 	oi.Version = fmt.Sprintf("%s (%s)", dist, kernelRelease)
 
 	return
