@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os/exec"
 	"runtime"
+	"strings"
 )
 
 // New returns an instance of OSInfo.
@@ -18,6 +19,6 @@ func New() (oi *OSInfo, err error) {
 	if err = cmd.Run(); err != nil {
 		return
 	}
-	oi.Version = out.String()
+	oi.Version = strings.TrimSpace(out.String())
 	return
 }
