@@ -10,7 +10,7 @@ import (
 
 const (
 	buildPropPath = "/system/build.prop"
-	releasePrefix = " ro.build.version.release="
+	releasePrefix = "ro.build.version.release="
 )
 
 // New returns an instance of OSInfo.
@@ -23,12 +23,13 @@ func New() (oi *OSInfo, err error) {
 	if err != nil {
 		return
 	}
+	defer f.Close()
 
 	sc := bufio.NewScanner(f)
 	for sc.Scan() {
 		line := sc.Text()
 		if strings.HasPrefix(line, releasePrefix) {
-			oi.Version = strings.TrimSpace(strings.TrimPrefix(releasePrefix, line))
+			oi.Version = strings.TrimSpace(strings.TrimPrefix(line, releasePrefix))
 			break
 		}
 	}
