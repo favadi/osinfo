@@ -20,7 +20,7 @@ func (oi *OSInfo) String() string {
 // Release returns release version of current running OS. It returns a
 // default string if can't find.
 func Release() string {
-	if oi, err := New(); err != nil {
+	if oi, err := New(); err == nil {
 		return oi.Version
 	}
 	return UnknownRelease
