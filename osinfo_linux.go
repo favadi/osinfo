@@ -11,16 +11,18 @@ import (
 )
 
 // New returns an instance of OSInfo.
-func New() (oi *OSInfo, err error) {
+func New() (oi *OSInfo) {
 	oi = &OSInfo{
-		Name: runtime.GOOS,
+		Name:    runtime.GOOS,
+		Version: UnknownRelease,
 	}
 
 	// kernel vesion
 	unameCmd := exec.Command("uname", "--kernel-release")
 	var unameOut bytes.Buffer
 	unameCmd.Stdout = &unameOut
-	if err = unameCmd.Run(); err != nil {
+	if err := unameCmd.Run(); err != nil {
+		oi.err = err
 		return
 	}
 	kernelRelease := strings.TrimSpace(unameOut.String())
@@ -29,12 +31,14 @@ func New() (oi *OSInfo, err error) {
 	lsbPath, err := exec.LookPath("lsb_release")
 	if err != nil { // lsb_release is not installed, returns kernel release
 		oi.Version = kernelRelease
+		oi.err = err
 		return
 	}
 	lsbCmd := exec.Command(lsbPath, "--description")
 	var lsbOut bytes.Buffer
 	lsbCmd.Stdout = &lsbOut
-	if err = lsbCmd.Run(); err != nil {
+	if err := lsbCmd.Run(); err != nil {
+		oi.err = err
 		return
 	}
 	desc := lsbOut.String()

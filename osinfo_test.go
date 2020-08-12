@@ -3,8 +3,8 @@ package osinfo
 import "testing"
 
 func TestOSInfo(t *testing.T) {
-	oi, err := New()
-	if err != nil {
+	oi := New()
+	if err := oi.Err(); err != nil {
 		t.Fatal(err)
 	}
 	t.Log(oi)
