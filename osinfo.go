@@ -11,17 +11,19 @@ const (
 type OSInfo struct {
 	Name    string `json:"os" yaml:"os"`
 	Version string `json:"version" yaml:"version"`
+	err     error
 }
 
 func (oi *OSInfo) String() string {
 	return fmt.Sprintf("%s %s", oi.Name, oi.Version)
 }
 
+func (oi *OSInfo) Err() error {
+	return oi.err
+}
+
 // Release returns release version of current running OS. It returns a
 // default string if can't find.
 func Release() string {
-	if oi, err := New(); err == nil {
-		return oi.Version
-	}
-	return UnknownRelease
+	return New().Version
 }

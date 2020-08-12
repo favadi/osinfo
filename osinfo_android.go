@@ -14,13 +14,15 @@ const (
 )
 
 // New returns an instance of OSInfo.
-func New() (oi *OSInfo, err error) {
+func New() (oi *OSInfo) {
 	oi = &OSInfo{
-		Name: runtime.GOOS,
+		Name:    runtime.GOOS,
+		Version: UnknownRelease,
 	}
 
 	f, err := os.Open(buildPropPath)
 	if err != nil {
+		oi.err = err
 		return
 	}
 	defer f.Close()
@@ -35,7 +37,7 @@ func New() (oi *OSInfo, err error) {
 	}
 
 	if len(oi.Version) == 0 {
-		err = fmt.Errorf("property not found: %s", releasePrefix)
+		oi.err = fmt.Errorf("property not found: %s", releasePrefix)
 	}
 	return
 }
