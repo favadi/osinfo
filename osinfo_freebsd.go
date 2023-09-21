@@ -1,10 +1,8 @@
 package osinfo
 
 import (
-	"bytes"
-	"os/exec"
+	"fmt"
 	"runtime"
-	"strings"
 )
 
 // New returns an instance of OSInfo.
@@ -13,16 +11,12 @@ func New() (oi *OSInfo) {
 		Name:    runtime.GOOS,
 		Version: UnknownRelease,
 	}
-
-	// kernel vesion
-	unameCmd := exec.Command("uname", "-v")
-	var unameOut bytes.Buffer
-	unameCmd.Stdout = &unameOut
-	if err := unameCmd.Run(); err != nil {
+	kv, err := kernelRelease()
+	if err != nil {
 		oi.err = err
 		return
 	}
-	oi.Version = strings.TrimSpace(unameOut.String())
+	oi.Version = fmt.Sprintf("(%s)", kv)
 
 	return
 }

@@ -1,6 +1,8 @@
 package osinfo
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestOSInfo(t *testing.T) {
 	oi := New()
